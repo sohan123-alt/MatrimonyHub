@@ -323,6 +323,39 @@ async function isUserAuthenticated() {
         return false;
     }
 }
-
 // Make Global
 window.isUserAuthenticated = isUserAuthenticated;
+
+async function loginUser(email, password) {
+
+    try {
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+
+        return {
+            success: true,
+            data: data
+        };
+
+    } catch (err) {
+
+        return {
+            success: false,
+            error: err.message
+        };
+    }
+}
+
+// Make Global
+window.loginUser = loginUser;
