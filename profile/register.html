@@ -190,7 +190,7 @@
         try {
 
             // REGISTER USER
-            const { data, error } = await supabase.auth.signUp({
+            const { data, error } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password
             });
@@ -203,7 +203,7 @@
             const user = data.user;
 
             // INSERT PROFILE DATA
-            const { error: profileError } = await supabase
+            const { error: profileError } = await supabaseClient
                 .from('profiles')
                 .insert([
                     {
