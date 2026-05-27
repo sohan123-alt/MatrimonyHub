@@ -63,7 +63,7 @@
                 <i class="fas fa-heart" style="color: #f48fb1;"></i> Matri<span>Hub</span>
             </div>
             <ul class="navbar-nav">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="../index.html">Home</a></li>
                 <li><a href="login.html">Login</a></li>
             </ul>
         </div>
@@ -143,84 +143,94 @@
     <script src="../assets/js/config/supabase.js"></script>
     <script src="../assets/js/userpanel/common.js"></script>
     <script>
-        const registerForm = document.getElementById('register-form');
-        const alertsContainer = document.getElementById('alerts-container');
+    const registerForm = document.getElementById('register-form');
+    const alertsContainer = document.getElementById('alerts-container');
 
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // Alert Function
+    function showAlert(message, type = 'danger') {
+        alertsContainer.innerHTML = `
+            <div style="
+                padding: 12px;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                color: white;
+                background: ${type === 'success' ? '#4caf50' : '#f44336'};
+            ">
+                ${message}
+            </div>
+        `;
+    }
 
-            const fullName = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const gender = document.getElementById('gender').value;
-            const dob = document.getElementById('dob').value;
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            // Validation
-            if (!fullName || !email || !password || !confirmPassword || !gender || !dob) {
-                showAlert('Please fill in all fields', 'warning', alertsContainer);
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const gender = document.getElementById('gender').value;
+        const dob = document.getElementById('dob').value;
+
+        // Validation
+        if (!fullName || !email || !password || !confirmPassword || !gender || !dob) {
+            showAlert('Please fill in all fields');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showAlert('Passwords do not match');
+            return;
+        }
+
+        if (password.length < 6) {
+            showAlert('Password must be at least 6 characters');
+            return;
+        }
+
+        try {
+
+            // REGISTER USER
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                showAlert(error.message);
                 return;
             }
 
-            if (!validateEmail(email)) {
-                showAlert('Please enter a valid email address', 'warning', alertsContainer);
-                return;
-            }
+            const user = data.user;
 
-            if (password !== confirmPassword) {
-                showAlert('Passwords do not match', 'warning', alertsContainer);
-                return;
-            }
-
-            if (!validatePassword(password)) {
-                showAlert('Password must be at least 6 characters long', 'warning', alertsContainer);
-                return;
-            }
-
-            // Calculate age
-            const birthDate = new Date(dob);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-
-            if (age < 18) {
-                showAlert('You must be at least 18 years old to register', 'warning', alertsContainer);
-                return;
-            }
-
-            showLoading('Creating your account...');
-
-            try {
-                const result = await registerUser(email, password, fullName);
-
-                if (result.success) {
-                    // Update profile with additional info
-                    const userId = result.data.user.id;
-                    const profileResult = await updateUserProfile(userId, {
+            // INSERT PROFILE DATA
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                    {
+                        id: user.id,
                         full_name: fullName,
                         gender: gender,
-                        age: age
-                    });
+                        dob: dob,
+                        email: email
+                    }
+                ]);
 
-                    hideLoading();
-                    showAlert('Account created successfully! Redirecting to profile creation...', 'success', alertsContainer);
-
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 2000);
-                } else {
-                    hideLoading();
-                    showAlert(result.error || 'Registration failed. Please try again.', 'danger', alertsContainer);
-                }
-            } catch (error) {
-                hideLoading();
-                showAlert('An error occurred: ' + error.message, 'danger', alertsContainer);
+            if (profileError) {
+                showAlert(profileError.message);
+                return;
             }
-        });
-    </script>
+
+            showAlert('Registration Successful!', 'success');
+
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+
+        } catch (err) {
+            showAlert(err.message);
+        }
+    });
+</script>
 </body>
 
 </html>
