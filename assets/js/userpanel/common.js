@@ -305,3 +305,24 @@ function initPage() {
 document.addEventListener('DOMContentLoaded', () => {
     initPage();
 });
+
+async function isUserAuthenticated() {
+
+    try {
+
+        const {
+            data: { session }
+        } = await supabaseClient.auth.getSession();
+
+        return !!session;
+
+    } catch (error) {
+
+        console.error(error);
+
+        return false;
+    }
+}
+
+// Make Global
+window.isUserAuthenticated = isUserAuthenticated;
