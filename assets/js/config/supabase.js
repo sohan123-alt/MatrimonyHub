@@ -41,27 +41,24 @@ const APP_CONFIG = {
 // ═════════════════════════════════════════════════════════════════════════════
 // AUTH FUNCTIONS
 // ═════════════════════════════════════════════════════════════════════════════
-
 async function getCurrentUser() {
 
     try {
 
         const {
-            data: { user },
-            error
+            data: { user }
         } = await supabaseClient.auth.getUser();
 
-        if (error) throw error;
-
-        return user;
+        return user || null;
 
     } catch (error) {
 
-        console.error('Get User Error:', error);
+        console.log('No active session');
 
         return null;
     }
 }
+
 
 async function signUp(email, password, fullName) {
 
