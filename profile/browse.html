@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Profiles - MatriHub</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .browse-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .filters-sidebar {
+            background: var(--bg-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group {
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-dark);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-direction: column;
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .pagination-container {
+            margin-top: var(--spacing-2xl);
+            text-align: center;
+        }
+
+        .profile-count {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .browse-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .profiles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-heart" style="color: #f48fb1;"></i> Matri<span>Hub</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="browse.html">Browse Profiles</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <div id="auth-container">
+                    <a href="login.html" class="btn btn-outline btn-small">Login</a>
+                    <a href="register.html" class="btn btn-primary btn-small">Register</a>
+                </div>
+                <div id="user-menu" class="navbar-dropdown hidden">
+                    <button id="user-menu-toggle" class="navbar-user">
+                        <img id="user-avatar" class="navbar-user-avatar" src="https://via.placeholder.com/40"
+                            alt="User">
+                        <span id="user-name">User</span>
+                    </button>
+                    <div class="navbar-dropdown-menu" id="dropdown-menu">
+                        <a href="profile/dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a href="profile/profile.html"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="profile/interests.html"><i class="fas fa-heart"></i> Interests</a>
+                        <a href="profile/favorites.html"><i class="fas fa-star"></i> Favorites</a>
+                        <hr
+                            style="margin: var(--spacing-sm) 0; border: none; border-top: 1px solid var(--border-color);">
+                        <a id="logout-btn" href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Title -->
+    <section
+        style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: var(--spacing-xl) 0; text-align: center;">
+        <div class="container">
+            <h1><i class="fas fa-search"></i> Browse Profiles</h1>
+            <p>Find your perfect match from our community</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="browse-container">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <h3 style="margin-bottom: var(--spacing-lg);">Filters</h3>
+                <form id="filter-form">
+                    <div class="filter-group">
+                        <label>Gender</label>
+                        <select id="filter-gender" name="gender">
+                            <option value="">All</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Age Range</label>
+                        <input type="number" id="filter-minAge" name="minAge" placeholder="Min" min="18" max="100">
+                        <input type="number" id="filter-maxAge" name="maxAge" placeholder="Max" min="18" max="100">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Religion</label>
+                        <select id="filter-religion" name="religion">
+                            <option value="">All</option>
+                            <option value="Islam">Islam</option>
+                            <option value="Hinduism">Hinduism</option>
+                            <option value="Buddhism">Buddhism</option>
+                            <option value="Christianity">Christianity</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Profession</label>
+                        <input type="text" id="filter-profession" name="profession" placeholder="Search profession">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Location</label>
+                        <input type="text" id="filter-location" name="location" placeholder="City or Region">
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Apply Filters
+                        </button>
+                        <button type="reset" class="btn btn-outline">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </aside>
+
+            <!-- Profiles Grid -->
+            <div>
+                <div class="profile-count" id="profile-count"></div>
+                <div class="profiles-grid" id="profiles-grid">
+                    <!-- Profiles will be loaded here -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container" id="pagination-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4><i class="fas fa-heart" style="color: #f48fb1;"></i> MatriHub</h4>
+                    <p>A modern matrimony platform connecting hearts with trust and transparency.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="browse.html">Browse Profiles</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Safety Tips</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 MatriHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/userpanel/common.js"></script>
+    <script>
+        let currentPage = 0;
+        const profilesPerPage = 9;
+        let totalProfiles = 0;
+
+        /**
+         * Load profiles with current filters
+         */
+        async function loadProfiles(page = 0) {
+            const gender = document.getElementById('filter-gender').value;
+            const minAge = parseInt(document.getElementById('filter-minAge').value) || null;
+            const maxAge = parseInt(document.getElementById('filter-maxAge').value) || null;
+            const religion = document.getElementById('filter-religion').value;
+            const profession = document.getElementById('filter-profession').value;
+            const location = document.getElementById('filter-location').value;
+
+            showLoading('Loading profiles...');
+
+            try {
+                const result = await searchProfiles({
+                    gender: gender || null,
+                    minAge,
+                    maxAge,
+                    religion: religion || null,
+                    profession: profession || null,
+                    location: location || null,
+                    page,
+                    limit: profilesPerPage
+                });
+
+                hideLoading();
+
+                if (result.success) {
+                    currentPage = page;
+                    totalProfiles = result.count || 0;
+
+                    const profilesGrid = document.getElementById('profiles-grid');
+                    const profileCount = document.getElementById('profile-count');
+
+                    if (result.data.length > 0) {
+                        profilesGrid.innerHTML = result.data
+                            .map(profile => createProfileCard(profile))
+                            .join('');
+                        profileCount.textContent = `Found ${totalProfiles} profiles`;
+                        loadPagination();
+                    } else {
+                        profilesGrid.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align: center; padding: var(--spacing-2xl);">
+                                <i class="fas fa-search" style="font-size: 3rem; color: var(--text-lighter); margin-bottom: var(--spacing-lg); display: block;"></i>
+                                <p>No profiles found matching your criteria.</p>
+                                <p style="font-size: var(--font-size-sm);">Try adjusting your filters</p>
+                            </div>
+                        `;
+                        profileCount.textContent = 'No profiles found';
+                    }
+                } else {
+                    showAlert('Error loading profiles: ' + result.error, 'danger');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('Error: ' + error.message, 'danger');
+            }
+        }
+
+        /**
+         * Load pagination
+         */
+        function loadPagination() {
+            const totalPages = Math.ceil(totalProfiles / profilesPerPage);
+            const paginationContainer = document.getElementById('pagination-container');
+
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination">';
+
+            if (currentPage > 0) {
+                html += `<button onclick="loadProfiles(${currentPage - 1})">← Previous</button>`;
+            }
+
+            for (let i = 0; i < totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="active">${i + 1}</button>`;
+                } else {
+                    html += `<button onclick="loadProfiles(${i})">${i + 1}</button>`;
+                }
+            }
+
+            if (currentPage < totalPages - 1) {
+                html += `<button onclick="loadProfiles(${currentPage + 1})">Next →</button>`;
+            }
+
+            html += '</div>';
+            paginationContainer.innerHTML = html;
+        }
+
+        /**
+         * Initialize page
+         */
+        function initBrowsePage() {
+            const filterForm = document.getElementById('filter-form');
+
+            // Load initial profiles
+            loadProfiles(0);
+
+            // Handle filter form submission
+            filterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                loadProfiles(0);
+            });
+
+            // Handle reset button
+            filterForm.addEventListener('reset', () => {
+                setTimeout(() => loadProfiles(0), 0);
+            });
+
+            // Load URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('gender')) {
+                document.getElementById('filter-gender').value = urlParams.get('gender');
+            }
+            if (urlParams.get('minAge')) {
+                document.getElementById('filter-minAge').value = urlParams.get('minAge');
+            }
+            if (urlParams.get('maxAge')) {
+                document.getElementById('filter-maxAge').value = urlParams.get('maxAge');
+            }
+            if (urlParams.get('religion')) {
+                document.getElementById('filter-religion').value = urlParams.get('religion');
+            }
+            if (urlParams.get('location')) {
+                document.getElementById('filter-location').value = urlParams.get('location');
+            }
+
+            if (urlParams.toString()) {
+                loadProfiles(0);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initBrowsePage);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MatriHub</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .dashboard-sidebar {
+            background: var(--bg-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            color: var(--text-dark);
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .dashboard-content {
+            background: var(--bg-white);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, rgba(233, 30, 99, 0.1), rgba(33, 150, 243, 0.1));
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-number {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: var(--font-size-sm);
+        }
+
+        .activity-item {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                gap: var(--spacing-md);
+                flex-wrap: wrap;
+            }
+
+            .sidebar-menu li {
+                margin-bottom: 0;
+            }
+
+            .sidebar-menu a {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: var(--font-size-sm);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-heart" style="color: #f48fb1;"></i> Matri<span>Hub</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="browse.html">Browse Profiles</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <div id="user-menu" class="navbar-dropdown">
+                    <button id="user-menu-toggle" class="navbar-user">
+                        <img id="user-avatar" class="navbar-user-avatar" src="https://via.placeholder.com/40"
+                            alt="User">
+                        <span id="user-name">User</span>
+                    </button>
+                    <div class="navbar-dropdown-menu" id="dropdown-menu">
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="interests.html"><i class="fas fa-heart"></i> Interests</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favorites</a>
+                        <hr
+                            style="margin: var(--spacing-sm) 0; border: none; border-top: 1px solid var(--border-color);">
+                        <a id="logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Title -->
+    <section
+        style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: var(--spacing-xl) 0; text-align: center;">
+        <div class="container">
+            <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+            <p id="welcome-msg">Welcome back!</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div id="alerts-container"></div>
+
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <h3 style="margin-bottom: var(--spacing-lg);">Menu</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="profile.html" class="active"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="interests.html"><i class="fas fa-heart"></i> Interests</a></li>
+                    <li><a href="favorites.html"><i class="fas fa-star"></i> Favorites</a></li>
+                    <li><a href="browse.html"><i class="fas fa-search"></i> Browse</a></li>
+                    <li><a href="#" id="admin-link" style="display: none;"><i class="fas fa-shield-alt"></i> Admin
+                            Panel</a></li>
+                    <hr style="margin: var(--spacing-lg) 0; border: none; border-top: 1px solid var(--border-color);">
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="login.html" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </aside>
+
+            <!-- Content -->
+            <div class="dashboard-content">
+                <!-- Stats -->
+                <div style="margin-bottom: var(--spacing-2xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg);">Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="profile-completion">0%</div>
+                            <div class="stat-label">Profile Completion</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="interests-count">0</div>
+                            <div class="stat-label">Interests Received</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="favorites-count">0</div>
+                            <div class="stat-label">Favorites Added</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="gallery-count">0</div>
+                            <div class="stat-label">Photos Uploaded</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="margin-bottom: var(--spacing-2xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg);">Quick Actions</h2>
+                    <div class="quick-actions">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h4><i class="fas fa-user" style="color: var(--primary-color);"></i> Complete Profile
+                                </h4>
+                                <p>Increase your chances of being matched by completing your profile</p>
+                                <a href="profile.html" class="btn btn-primary btn-small"
+                                    style="margin-top: var(--spacing-lg);">Go to Profile</a>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h4><i class="fas fa-images" style="color: var(--primary-color);"></i> Upload Photos
+                                </h4>
+                                <p>Add more photos to your gallery to attract more matches</p>
+                                <a href="profile.html" class="btn btn-primary btn-small"
+                                    style="margin-top: var(--spacing-lg);">Add Photos</a>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h4><i class="fas fa-search" style="color: var(--primary-color);"></i> Browse Profiles
+                                </h4>
+                                <p>Explore profiles and send interest requests to potential matches</p>
+                                <a href="browse.html" class="btn btn-primary btn-small"
+                                    style="margin-top: var(--spacing-lg);">Browse Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div>
+                    <h2 style="margin-bottom: var(--spacing-lg);">Recent Activity</h2>
+                    <div class="card">
+                        <div id="recent-activity">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div>
+                                    <strong>Welcome!</strong>
+                                    <p style="color: var(--text-light); font-size: var(--font-size-sm); margin: 0;">Your
+                                        profile is all set. Start exploring matches now!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/userpanel/common.js"></script>
+    <script>
+        let currentUser = null;
+
+        /**
+         * Initialize dashboard
+         */
+        async function initDashboard() {
+            currentUser = await checkAuthentication();
+            if (!currentUser) return;
+
+            // Load profile
+            const profileResult = await getUserProfile(currentUser.id);
+            if (profileResult.success && profileResult.data) {
+                const profile = profileResult.data;
+                document.getElementById('welcome-msg').textContent = `Welcome back, ${profile.full_name || 'User'}!`;
+                updateStats(profile);
+            }
+
+            // Check if admin
+            checkAdminStatus();
+
+            // Setup event listeners
+            document.getElementById('logout-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                logoutUser().then(() => {
+                    window.location.href = 'index.html';
+                });
+            });
+        }
+
+        /**
+         * Update dashboard stats
+         */
+        async function updateStats(profile) {
+            // Profile completion
+            const profileCompletion = calculateProfileCompletion(profile);
+            document.getElementById('profile-completion').textContent = profileCompletion + '%';
+
+            // Interests count
+            const interestsResult = await getReceivedInterests(currentUser.id);
+            if (interestsResult.success) {
+                document.getElementById('interests-count').textContent = interestsResult.data.length;
+            }
+
+            // Favorites count
+            const favoritesResult = await getUserFavorites(currentUser.id);
+            if (favoritesResult.success) {
+                document.getElementById('favorites-count').textContent = favoritesResult.data.length;
+            }
+
+            // Gallery count
+            const galleryResult = await getUserGallery(currentUser.id);
+            if (galleryResult.success) {
+                document.getElementById('gallery-count').textContent = galleryResult.data.length;
+            }
+        }
+
+        /**
+         * Calculate profile completion
+         */
+        function calculateProfileCompletion(profile) {
+            const fields = ['full_name', 'age', 'gender', 'profession', 'location', 'bio', 'profile_image_url'];
+            const filledFields = fields.filter(field => profile[field] && profile[field] !== '').length;
+            return Math.round((filledFields / fields.length) * 100);
+        }
+
+        /**
+         * Check if user is admin
+         */
+        function checkAdminStatus() {
+            // In a real app, check user role from profiles table
+            // For now, hide admin link
+            const adminLink = document.getElementById('admin-link');
+            // adminLink.style.display = 'block'; // Show only for admins
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+
+</html>

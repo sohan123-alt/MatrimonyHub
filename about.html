@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | MatrimonyHUB</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 18px 8%;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff4b7d;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #ff4b7d;
+        }
+
+        .hero {
+            width: 100%;
+            min-height: 60vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 55px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .hero-content p {
+            color: #f1f1f1;
+            font-size: 18px;
+            max-width: 700px;
+        }
+
+        .about-section {
+            padding: 80px 8%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-content h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #ff4b7d;
+        }
+
+        .about-content p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .features {
+            padding: 60px 8%;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 42px;
+            color: #ff4b7d;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .feature-card i {
+            font-size: 45px;
+            color: #ff4b7d;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 12px;
+        }
+
+        .team {
+            padding: 80px 8%;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .team-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .team-info {
+            padding: 20px;
+        }
+
+        .footer {
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 38px;
+            }
+
+            .nav-links {
+                gap: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">MatrimonyHUB</div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="profile/login.html">Login</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Perfect Life Partner</h1>
+            <p>
+                MatrimonyHUB helps thousands of people connect, build relationships,
+                and create a happy future together.
+            </p>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-image">
+            <img src="" alt="About Matrimony">
+        </div>
+
+        <div class="about-content">
+            <h2>About MatrimonyHUB</h2>
+
+            <p>
+                MatrimonyHUB is a modern matrimony platform designed to help people
+                find meaningful and trusted relationships.
+            </p>
+
+            <p>
+                Our platform provides secure profile management, smart search filters,
+                real-time messaging, and verified user systems.
+            </p>
+
+            <p>
+                We believe every person deserves a trusted and beautiful journey toward marriage.
+            </p>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="section-title">
+            <h2>Why Choose Us</h2>
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <i class="fa-solid fa-shield-heart"></i>
+                <h3>Secure Platform</h3>
+                <p>Strong security system with protected user profiles.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fa-solid fa-user-check"></i>
+                <h3>Verified Profiles</h3>
+                <p>Trusted and verified profiles for safe connections.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fa-solid fa-comments"></i>
+                <h3>Real-Time Chat</h3>
+                <p>Connect instantly using our messaging system.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fa-solid fa-heart"></i>
+                <h3>Perfect Match</h3>
+                <p>Advanced search filters to find compatible partners.</p>
+            </div>
+
+        </div>
+
+        <footer class="footer">
+            <p>© 2026 MatrimonyHUB. All Rights Reserved.</p>
+        </footer>
+
+        <script>
+            console.log('About Page Loaded Successfully');
+        </script>
+
+</body>
+
+</html>

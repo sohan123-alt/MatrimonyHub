@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interest Management - Admin Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">💎</span>
+                <span class="logo-text">MatriAdmin</span>
+            </div>
+            <button class="sidebar-toggle-mobile" id="sidebarToggleMobile">
+                <i data-feather="menu"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="admin.html" class="nav-item" data-page="dashboard">
+                <i data-feather="home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="nav-item" data-page="users">
+                <i data-feather="users"></i>
+                <span>Users</span>
+                <span class="badge" id="usersCount">0</span>
+            </a>
+            <a href="interests.html" class="nav-item active" data-page="interests">
+                <i data-feather="heart"></i>
+                <span>Interests</span>
+            </a>
+            <a href="reports.html" class="nav-item" data-page="reports">
+                <i data-feather="alert-circle"></i>
+                <span>Reports</span>
+                <span class="badge danger" id="reportsCount">0</span>
+            </a>
+            <a href="images.html" class="nav-item" data-page="images">
+                <i data-feather="image"></i>
+                <span>Images</span>
+            </a>
+            <a href="analytics.html" class="nav-item" data-page="analytics">
+                <i data-feather="bar-chart-2"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="settings.html" class="nav-item" data-page="settings">
+                <i data-feather="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="logoutBtn">
+                <i data-feather="log-out"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Top Navbar -->
+        <nav class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i data-feather="menu"></i>
+                </button>
+                <div class="breadcrumb">
+                    <span id="breadcrumbText">Interest Management</span>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="notification-container">
+                    <button class="btn-icon notification-btn" id="notificationBtn">
+                        <i data-feather="bell"></i>
+                        <span class="notification-badge" id="notificationCount">0</span>
+                    </button>
+                </div>
+                <button class="btn-icon" id="themeToggle">
+                    <i data-feather="moon"></i>
+                </button>
+                <div class="admin-profile">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin" alt="Admin Avatar" class="avatar">
+                </div>
+            </div>
+        </nav>
+
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <section class="page-header">
+                <div>
+                    <h1>Interest Management</h1>
+                    <p>Monitor and manage user interests and relationship requests</p>
+                </div>
+            </section>
+
+            <!-- Stats -->
+            <section class="stats-grid stats-compact">
+                <div class="stat-card compact">
+                    <div class="stat-icon" style="--color: #ec4899;">
+                        <i data-feather="heart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Interests</p>
+                        <h3 class="stat-value" id="totalInterests">0</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card compact">
+                    <div class="stat-icon" style="--color: #10b981;">
+                        <i data-feather="check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Accepted</p>
+                        <h3 class="stat-value" id="acceptedInterests">0</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card compact">
+                    <div class="stat-icon" style="--color: #f59e0b;">
+                        <i data-feather="clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Pending</p>
+                        <h3 class="stat-value" id="pendingInterests">0</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <section class="search-filters">
+                <div class="filters">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+
+                    <button class="btn btn-secondary" id="clearFiltersBtn">
+                        <i data-feather="x"></i> Clear
+                    </button>
+                </div>
+            </section>
+
+            <!-- Interests Table -->
+            <section class="table-section">
+                <div class="table-header">
+                    <h2>All Interests</h2>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="interests-table">
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Status</th>
+                                <th>Sent Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interestsTableBody">
+                            <tr class="skeleton-row">
+                                <td colspan="5">
+                                    <div class="skeleton"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="btn-pagination" id="prevPage">Previous</button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button class="btn-pagination" id="nextPage">Next</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2 id="confirmTitle">Confirm Action</h2>
+                <button class="modal-close" id="closeConfirmModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelConfirmBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/authen/auth.js"></script>
+    <script src="../assets/js/api/ui.js"></script>
+    <script>
+        // Simple Interests Page Script
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let allInterests = [];
+        let filteredInterests = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadInterests();
+                setupFilters();
+                setupPagination();
+                setupTableActions();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading interests', 'error');
+            }
+        });
+
+        async function loadInterests() {
+            try {
+                showLoading(document.querySelector('.content-wrapper'));
+                allInterests = await fetchInterests();
+                filteredInterests = [...allInterests];
+
+                updateStats();
+                renderTable();
+                hideLoading(document.querySelector('.content-wrapper'));
+            } catch (error) {
+                console.error('Error:', error);
+                hideLoading(document.querySelector('.content-wrapper'));
+            }
+        }
+
+        function updateStats() {
+            const total = allInterests.length;
+            const accepted = allInterests.filter(i => i.status === 'accepted').length;
+            const pending = allInterests.filter(i => i.status === 'pending').length;
+
+            document.getElementById('totalInterests').textContent = total;
+            document.getElementById('acceptedInterests').textContent = accepted;
+            document.getElementById('pendingInterests').textContent = pending;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('interestsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const items = filteredInterests.slice(start, end);
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding: 40px;">No interests found</td></tr>';
+                return;
+            }
+
+            items.forEach(interest => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${interest.sender?.full_name || 'Unknown'}</td>
+                    <td>${interest.receiver?.full_name || 'Unknown'}</td>
+                    <td>${createStatusBadge(interest.status).outerHTML}</td>
+                    <td>${formatDate(interest.created_at)}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="action-btn danger" onclick="deleteInterest('${interest.id}')">
+                                <i data-feather="trash-2"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            feather.replace();
+            updatePagination();
+        }
+
+        function setupFilters() {
+            const statusFilter = document.getElementById('statusFilter');
+            const clearBtn = document.getElementById('clearFiltersBtn');
+
+            if (statusFilter) {
+                statusFilter.addEventListener('change', () => {
+                    const status = statusFilter.value;
+                    filteredInterests = status ? allInterests.filter(i => i.status === status) : [...allInterests];
+                    currentPage = 1;
+                    renderTable();
+                });
+            }
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    statusFilter.value = '';
+                    filteredInterests = [...allInterests];
+                    currentPage = 1;
+                    renderTable();
+                });
+            }
+        }
+
+        function setupPagination() {
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                const maxPages = Math.ceil(filteredInterests.length / itemsPerPage);
+                if (currentPage < maxPages) {
+                    currentPage++;
+                    renderTable();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        }
+
+        function updatePagination() {
+            const maxPages = Math.ceil(filteredInterests.length / itemsPerPage);
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === maxPages;
+
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = '';
+            for (let i = 1; i <= Math.min(maxPages, 5); i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-num ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderTable();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                pageNumbers.appendChild(btn);
+            }
+        }
+
+        function setupTableActions() {
+            // Handled inline in buttons
+        }
+
+        // CSS
+        const style = document.createElement('style');
+        style.textContent = `.text-center { text-align: center; color: var(--color-text-secondary); }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

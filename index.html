@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatriHub - Modern Matrimony Platform</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-heart" style="color: #f48fb1;"></i> Matri<span>Hub</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="profile/browse.html">Browse Profiles</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <div id="auth-container">
+                    <a href="profile/login.html" class="btn btn-outline btn-small">Login</a>
+                    <a href="profile/register.html" class="btn btn-primary btn-small">Register</a>
+                </div>
+                <div id="user-menu" class="navbar-dropdown hidden">
+                    <button id="user-menu-toggle" class="navbar-user">
+                        <img id="user-avatar" class="navbar-user-avatar" src="https://via.placeholder.com/40"
+                            alt="User">
+                        <span id="user-name">User</span>
+                    </button>
+                    <div class="navbar-dropdown-menu" id="dropdown-menu">
+                        <a href="profile/dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a href="profile/profile.html"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="profile/interests.html"><i class="fas fa-heart"></i> Interests</a>
+                        <a href="profile/favorites.html"><i class="fas fa-star"></i> Favorites</a>
+                        <hr
+                            style="margin: var(--spacing-sm) 0; border: none; border-top: 1px solid var(--border-color);">
+                        <a id="logout-btn" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Life Partner</h1>
+            <p>MatriHub is a modern matrimony platform connecting hearts across communities with trust and transparency
+            </p>
+            <div class="hero-buttons">
+                <a href="profile/register.html" class="btn btn-primary btn-large">Get Started</a>
+                <a href="profile/browse.html" class="btn btn-outline btn-large"
+                    style="border-color: white; color: white;">Browse Profiles</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <div class="container">
+        <section class="search-section">
+            <form class="search-form" id="search-form">
+                <div class="form-group">
+                    <label>Looking for</label>
+                    <select id="gender" name="gender">
+                        <option value="">All</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age Range</label>
+                    <input type="number" id="minAge" name="minAge" placeholder="Min" min="18" max="100">
+                </div>
+                <div class="form-group">
+                    <label></label>
+                    <input type="number" id="maxAge" name="maxAge" placeholder="Max" min="18" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Religion</label>
+                    <select id="religion" name="religion">
+                        <option value="">All</option>
+                        <option value="Islam">Islam</option>
+                        <option value="Hinduism">Hinduism</option>
+                        <option value="Buddhism">Buddhism</option>
+                        <option value="Christianity">Christianity</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="location" name="location" placeholder="City or Region">
+                </div>
+                <button type="submit" class="btn btn-primary btn-large">
+                    <i class="profile/browse.html"></i> Search
+                </button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container" style="margin: var(--spacing-2xl) auto;">
+        <!-- Featured Profiles Section -->
+        <section>
+            <h2 style="text-align: center; margin-bottom: var(--spacing-2xl);">Featured Profiles</h2>
+            <div class="grid grid-3" id="featured-profiles">
+                <!-- Profiles will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section style="margin: var(--spacing-2xl) 0;">
+            <h2 style="text-align: center; margin-bottom: var(--spacing-2xl);">Why Choose MatriHub</h2>
+            <div class="grid grid-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: var(--spacing-lg);">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>100% Safe & Secure</h4>
+                        <p>Your privacy and security are our top priority with end-to-end encryption</p>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: var(--spacing-lg);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h4>Verified Profiles</h4>
+                        <p>All profiles are verified to ensure authenticity and genuine connections</p>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: var(--spacing-lg);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4>Large Community</h4>
+                        <p>Connect with thousands of compatible matches across the globe</p>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: var(--spacing-lg);">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>24/7 Support</h4>
+                        <p>Our dedicated support team is always here to help you find your match</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4><i class="fas fa-heart" style="color: #f48fb1;"></i> MatriHub</h4>
+                    <p>A modern matrimony platform connecting hearts with trust and transparency.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="profile/browse.html">Browse Profiles</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Safety Tips</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> <a
+                                href="mailto:support@matrihub.com">support@matrihub.com</a></li>
+                        <li><i class="fas fa-phone"></i> <a href="tel:+8801234567890">+880 123 456 7890</a></li>
+                        <li><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 MatriHub. All rights reserved. | Designed with <i class="fas fa-heart"
+                        style="color: #f48fb1;"></i> for love</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config/supabase.js"></script>
+    <script src="assets/js/userpanel/common.js"></script>
+    <script src="assets/js/home/home.js"></script>
+</body>
+
+</html>

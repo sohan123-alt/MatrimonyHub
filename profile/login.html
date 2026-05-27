@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MatriHub</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: var(--spacing-2xl) auto;
+            padding: var(--spacing-2xl);
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .auth-header h1 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+        }
+
+        .auth-link a {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .forgot-password a {
+            color: var(--primary-color);
+            font-size: var(--font-size-sm);
+        }
+
+        .demo-credentials {
+            background: rgba(33, 150, 243, 0.05);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+        }
+
+        .demo-credentials strong {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--secondary-color);
+        }
+
+        .demo-credentials p {
+            margin: var(--spacing-xs) 0;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+
+<body style="background: linear-gradient(135deg, rgba(233, 30, 99, 0.05), rgba(33, 150, 243, 0.05));">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-heart" style="color: #f48fb1;"></i> Matri<span>Hub</span>
+            </div>
+            <ul class="navbar-nav">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="register.html">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Form -->
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Login to find your perfect match</p>
+            </div>
+
+            <div id="alerts-container"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large"
+                    style="width: 100%; margin-bottom: var(--spacing-lg);">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <div class="auth-link">
+                <p>Don't have an account? <a href="register.html">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/userpanel/common.js"></script>
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const alertsContainer = document.getElementById('alerts-container');
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', async () => {
+            const isAuthenticated = await isUserAuthenticated();
+            if (isAuthenticated) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showAlert('Please fill in all fields', 'warning', alertsContainer);
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showAlert('Please enter a valid email address', 'warning', alertsContainer);
+                return;
+            }
+
+            showLoading('Logging in...');
+
+            try {
+                const result = await loginUser(email, password);
+
+                if (result.success) {
+                    hideLoading();
+                    showAlert('Login successful! Redirecting...', 'success', alertsContainer);
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    hideLoading();
+                    showAlert(result.error || 'Login failed. Please check your credentials.', 'danger', alertsContainer);
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('An error occurred: ' + error.message, 'danger', alertsContainer);
+            }
+        });
+    </script>
+</body>
+
+</html>

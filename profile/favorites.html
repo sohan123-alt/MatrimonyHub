@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - MatriHub</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .favorite-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .favorite-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .favorite-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .favorite-info {
+            padding: var(--spacing-lg);
+        }
+
+        .favorite-name {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .favorite-details {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            color: var(--text-light);
+        }
+
+        .favorite-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .favorite-actions .btn {
+            flex: 1;
+            padding: var(--spacing-sm);
+            font-size: var(--font-size-xs);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--text-lighter);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .filter-bar {
+            background: var(--bg-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-2xl);
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-bar .btn {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .favorites-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .filter-bar {
+                flex-direction: column;
+            }
+
+            .filter-bar .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-heart" style="color: #f48fb1;"></i> Matri<span>Hub</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="browse.html">Browse Profiles</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <div id="user-menu" class="navbar-dropdown">
+                    <button id="user-menu-toggle" class="navbar-user">
+                        <img id="user-avatar" class="navbar-user-avatar" src="https://via.placeholder.com/40"
+                            alt="User">
+                        <span id="user-name">User</span>
+                    </button>
+                    <div class="navbar-dropdown-menu" id="dropdown-menu">
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="interests.html"><i class="fas fa-heart"></i> Interests</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favorites</a>
+                        <hr
+                            style="margin: var(--spacing-sm) 0; border: none; border-top: 1px solid var(--border-color);">
+                        <a id="logout-btn" href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Title -->
+    <section
+        style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: var(--spacing-xl) 0; text-align: center;">
+        <div class="container">
+            <h1><i class="fas fa-star"></i> My Favorites</h1>
+            <p>Your collection of favorite profiles</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div id="alerts-container"></div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <span id="favorites-count" style="font-weight: 600;">Loading...</span>
+            <div style="flex: 1;"></div>
+            <button class="btn btn-outline btn-small" onclick="loadFavorites()">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+            <a href="browse.html" class="btn btn-primary btn-small">
+                <i class="fas fa-search"></i> Browse More
+            </a>
+        </div>
+
+        <!-- Favorites Grid -->
+        <div class="favorites-grid" id="favorites-grid"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 MatriHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/userpanel/common.js"></script>
+    <script>
+        let currentUser = null;
+
+        async function initFavoritesPage() {
+            currentUser = await checkAuthentication();
+            if (!currentUser) return;
+
+            await loadFavorites();
+        }
+
+        async function loadFavorites() {
+            showLoading('Loading favorites...');
+            const result = await getUserFavorites(currentUser.id);
+            hideLoading();
+
+            const container = document.getElementById('favorites-grid');
+            const countEl = document.getElementById('favorites-count');
+
+            if (result.success && result.data.length > 0) {
+                countEl.textContent = `${result.data.length} Favorite${result.data.length !== 1 ? 's' : ''}`;
+                container.innerHTML = result.data
+                    .map(favorite => createFavoriteCard(favorite.profiles))
+                    .join('');
+            } else {
+                countEl.textContent = 'No Favorites';
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1;">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3>No Favorites Yet</h3>
+                            <p>Start adding your favorite profiles to keep track of them.</p>
+                            <a href="browse.html" class="btn btn-primary" style="margin-top: var(--spacing-lg);">
+                                Browse Profiles
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createFavoriteCard(profile) {
+            return `
+                <div class="favorite-card">
+                    <img src="${profile.profile_image_url || 'https://via.placeholder.com/250'}" alt="${profile.full_name}" class="favorite-image" onerror="this.src='https://via.placeholder.com/250'">
+                    <div class="favorite-info">
+                        <div class="favorite-name">${profile.full_name}</div>
+                        <div class="favorite-details">
+                            <span><i class="fas fa-birthday-cake"></i> ${profile.age} years old</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${profile.location || 'Not specified'}</span>
+                            <span><i class="fas fa-briefcase"></i> ${profile.profession || 'Professional'}</span>
+                        </div>
+                        <div class="favorite-actions">
+                            <a href="profile-detail.html?id=${profile.id}" class="btn btn-secondary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <button class="btn btn-primary" onclick="sendInterestClick('${profile.id}')">
+                                <i class="fas fa-heart"></i> Interest
+                            </button>
+                            <button class="btn btn-outline" onclick="removeFromFavoritesClick('${profile.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function removeFromFavoritesClick(favoriteUserId) {
+            if (!confirm('Remove from favorites?')) return;
+
+            showLoading('Removing from favorites...');
+            const result = await removeFromFavorites(currentUser.id, favoriteUserId);
+            hideLoading();
+
+            if (result.success) {
+                showToast('Removed from favorites', 'success');
+                await loadFavorites();
+            } else {
+                showAlert('Failed to remove from favorites', 'danger');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initFavoritesPage);
+    </script>
+</body>
+
+</html>

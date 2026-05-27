@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Admin Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">💎</span>
+                <span class="logo-text">MatriAdmin</span>
+            </div>
+            <button class="sidebar-toggle-mobile" id="sidebarToggleMobile">
+                <i data-feather="menu"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="admin.html" class="nav-item" data-page="dashboard">
+                <i data-feather="home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="nav-item" data-page="users">
+                <i data-feather="users"></i>
+                <span>Users</span>
+                <span class="badge" id="usersCount">0</span>
+            </a>
+            <a href="interests.html" class="nav-item" data-page="interests">
+                <i data-feather="heart"></i>
+                <span>Interests</span>
+            </a>
+            <a href="reports.html" class="nav-item" data-page="reports">
+                <i data-feather="alert-circle"></i>
+                <span>Reports</span>
+                <span class="badge danger" id="reportsCount">0</span>
+            </a>
+            <a href="images.html" class="nav-item" data-page="images">
+                <i data-feather="image"></i>
+                <span>Images</span>
+            </a>
+            <a href="analytics.html" class="nav-item active" data-page="analytics">
+                <i data-feather="bar-chart-2"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="settings.html" class="nav-item" data-page="settings">
+                <i data-feather="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="logoutBtn">
+                <i data-feather="log-out"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Top Navbar -->
+        <nav class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i data-feather="menu"></i>
+                </button>
+                <div class="breadcrumb">
+                    <span id="breadcrumbText">Analytics</span>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="notification-container">
+                    <button class="btn-icon notification-btn" id="notificationBtn">
+                        <i data-feather="bell"></i>
+                        <span class="notification-badge" id="notificationCount">0</span>
+                    </button>
+                </div>
+                <button class="btn-icon" id="themeToggle">
+                    <i data-feather="moon"></i>
+                </button>
+                <div class="admin-profile">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin" alt="Admin Avatar" class="avatar">
+                </div>
+            </div>
+        </nav>
+
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <section class="page-header">
+                <div>
+                    <h1>Analytics & Reports</h1>
+                    <p>Comprehensive insights into your platform performance</p>
+                </div>
+                <div class="header-actions">
+                    <select id="dateRangeFilter" class="filter-select">
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Key Metrics -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="--color: #3b82f6;">
+                        <i data-feather="arrow-up"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Growth</p>
+                        <h3 class="stat-value" id="totalGrowth">0%</h3>
+                        <p class="stat-change positive">
+                            <span id="growthChange">+0</span> new users
+                        </p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="--color: #10b981;">
+                        <i data-feather="trending-up"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Engagement Rate</p>
+                        <h3 class="stat-value" id="engagementRate">0%</h3>
+                        <p class="stat-change positive">
+                            <span id="engagementChange">+0%</span> this period
+                        </p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="--color: #f59e0b;">
+                        <i data-feather="activity"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Daily Active Users</p>
+                        <h3 class="stat-value" id="dailyActiveUsers">0</h3>
+                        <p class="stat-change">
+                            <span id="dauChange">+0%</span> average
+                        </p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="--color: #ec4899;">
+                        <i data-feather="target"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Success Rate</p>
+                        <h3 class="stat-value" id="successRate">0%</h3>
+                        <p class="stat-change positive">
+                            <span id="successChange">+0%</span> improvement
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Grid -->
+            <section class="charts-section">
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h2>User Registration Trend</h2>
+                        <span class="chart-subtitle">Monthly registrations</span>
+                    </div>
+                    <canvas id="registrationTrendChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Gender Distribution</h2>
+                    </div>
+                    <canvas id="genderDistributionChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Religion Distribution</h2>
+                    </div>
+                    <canvas id="religionDistributionChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Interest Activity</h2>
+                    </div>
+                    <canvas id="interestActivityChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Top Locations</h2>
+                    </div>
+                    <canvas id="topLocationsChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>User Status Distribution</h2>
+                    </div>
+                    <canvas id="userStatusChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Detailed Table -->
+            <section class="table-section">
+                <div class="table-header">
+                    <h2>Monthly Performance</h2>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>New Users</th>
+                                <th>Active Users</th>
+                                <th>Interests</th>
+                                <th>Conversations</th>
+                                <th>Conversion Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analyticsTableBody">
+                            <tr class="skeleton-row">
+                                <td colspan="6">
+                                    <div class="skeleton"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/api/ui.js"></script>
+    <script src="../assets/js/authen/auth.js"></script>
+    <script src="../assets/js/api/analytics.js"></script>
+</body>
+
+</html>

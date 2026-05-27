@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports Management - Admin Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">💎</span>
+                <span class="logo-text">MatriAdmin</span>
+            </div>
+            <button class="sidebar-toggle-mobile" id="sidebarToggleMobile">
+                <i data-feather="menu"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="admin.html" class="nav-item" data-page="dashboard">
+                <i data-feather="home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="nav-item" data-page="users">
+                <i data-feather="users"></i>
+                <span>Users</span>
+                <span class="badge" id="usersCount">0</span>
+            </a>
+            <a href="interests.html" class="nav-item" data-page="interests">
+                <i data-feather="heart"></i>
+                <span>Interests</span>
+            </a>
+            <a href="reports.html" class="nav-item active" data-page="reports">
+                <i data-feather="alert-circle"></i>
+                <span>Reports</span>
+                <span class="badge danger" id="reportsCount">0</span>
+            </a>
+            <a href="images.html" class="nav-item" data-page="images">
+                <i data-feather="image"></i>
+                <span>Images</span>
+            </a>
+            <a href="analytics.html" class="nav-item" data-page="analytics">
+                <i data-feather="bar-chart-2"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="settings.html" class="nav-item" data-page="settings">
+                <i data-feather="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="logoutBtn">
+                <i data-feather="log-out"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Top Navbar -->
+        <nav class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i data-feather="menu"></i>
+                </button>
+                <div class="breadcrumb">
+                    <span id="breadcrumbText">Reports Management</span>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="notification-container">
+                    <button class="btn-icon notification-btn" id="notificationBtn">
+                        <i data-feather="bell"></i>
+                        <span class="notification-badge" id="notificationCount">0</span>
+                    </button>
+                </div>
+                <button class="btn-icon" id="themeToggle">
+                    <i data-feather="moon"></i>
+                </button>
+                <div class="admin-profile">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin" alt="Admin Avatar" class="avatar">
+                </div>
+            </div>
+        </nav>
+
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <section class="page-header">
+                <div>
+                    <h1>Reports Management</h1>
+                    <p>Review and manage reported profiles and harmful content</p>
+                </div>
+            </section>
+
+            <!-- Stats Cards -->
+            <section class="stats-grid stats-compact">
+                <div class="stat-card compact">
+                    <div class="stat-icon" style="--color: #ef4444;">
+                        <i data-feather="alert-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Pending Reports</p>
+                        <h3 class="stat-value" id="pendingReports">0</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card compact">
+                    <div class="stat-icon" style="--color: #f59e0b;">
+                        <i data-feather="eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Under Review</p>
+                        <h3 class="stat-value" id="underReviewReports">0</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card compact">
+                    <div class="stat-icon" style="--color: #10b981;">
+                        <i data-feather="check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Resolved</p>
+                        <h3 class="stat-value" id="resolvedReports">0</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <section class="search-filters">
+                <div class="search-box">
+                    <i data-feather="search"></i>
+                    <input type="text" id="reportSearch" placeholder="Search by profile name or report ID..."
+                        class="search-input">
+                </div>
+
+                <div class="filters">
+                    <select id="reportStatusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+
+                    <select id="reportReasonFilter" class="filter-select">
+                        <option value="">All Reasons</option>
+                        <option value="fake_profile">Fake Profile</option>
+                        <option value="inappropriate_content">Inappropriate Content</option>
+                        <option value="harassment">Harassment</option>
+                        <option value="spam">Spam</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <button class="btn btn-secondary" id="clearFiltersBtn">
+                        <i data-feather="x"></i> Clear
+                    </button>
+                </div>
+            </section>
+
+            <!-- Reports Table -->
+            <section class="table-section">
+                <div class="table-header">
+                    <h2>All Reports</h2>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Reported Profile</th>
+                                <th>Reason</th>
+                                <th>Reporter</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <tr class="skeleton-row">
+                                <td colspan="7">
+                                    <div class="skeleton"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="btn-pagination" id="prevPage">Previous</button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button class="btn-pagination" id="nextPage">Next</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Report Details Modal -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Report Details</h2>
+                <button class="modal-close" id="closeReportModal">&times;</button>
+            </div>
+            <div class="modal-body" id="reportModalBody">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeReportModalBtn">Close</button>
+                <button class="btn btn-primary" id="markResolvedBtn">Mark as Resolved</button>
+                <button class="btn btn-danger" id="deleteProfileBtn">Delete Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Action Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2 id="confirmTitle">Confirm Action</h2>
+                <button class="modal-close" id="closeConfirmModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelConfirmBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config/supabase.js"></script>
+    <script src="../assets/js/authen/auth.js"></script>
+    <script src="../assets/js/api/ui.js"></script>
+    <script src="../assets/js/api/reports.js"></script>
+</body>
+
+</html>
