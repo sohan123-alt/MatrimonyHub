@@ -1,11 +1,6 @@
-// ================================================
 // COMMON JAVASCRIPT FUNCTIONS
-// ================================================
 
-// ================================================
 // ALERT SYSTEM
-// ================================================
-
 function showAlert(message, type = 'info', container = null) {
 
     const alertContainer =
@@ -82,10 +77,7 @@ function showToast(message, type = 'success') {
 
 }
 
-// ================================================
 // LOADING SYSTEM
-// ================================================
-
 function showLoading(message = 'Loading...') {
 
     let loader =
@@ -150,10 +142,7 @@ function hideLoading() {
     }
 }
 
-// ================================================
 // EMAIL VALIDATION
-// ================================================
-
 function validateEmail(email) {
 
     const regex =
@@ -162,20 +151,14 @@ function validateEmail(email) {
     return regex.test(email);
 }
 
-// ================================================
 // PASSWORD VALIDATION
-// ================================================
-
 function validatePassword(password) {
 
     return password.length >= 6;
 
 }
 
-// ================================================
 // AUTH CHECK
-// ================================================
-
 async function isUserAuthenticated() {
 
     try {
@@ -194,26 +177,34 @@ async function isUserAuthenticated() {
     }
 }
 
-// ================================================
 // GET CURRENT USER
-// ================================================
-
 async function getCurrentUser() {
 
     try {
+
+        const {
+            data: { session }
+        } = await supabaseClient.auth.getSession();
+
+        // No session
+        if (!session) {
+            return null;
+        }
 
         const {
             data: { user },
             error
         } = await supabaseClient.auth.getUser();
 
-        if (error) throw error;
+        if (error) {
+            return null;
+        }
 
         return user;
 
     } catch (error) {
 
-        console.error(error);
+        console.log('No active session');
 
         return null;
     }
@@ -267,10 +258,7 @@ async function registerUser(
     }
 }
 
-// ================================================
-// LOGIN USER
-// ================================================
-
+=// LOGIN USER
 async function loginUser(email, password) {
 
     try {
@@ -305,10 +293,7 @@ async function loginUser(email, password) {
     }
 }
 
-// ================================================
 // LOGOUT USER
-// ================================================
-
 async function logoutUser() {
 
     try {
@@ -331,10 +316,7 @@ async function logoutUser() {
     }
 }
 
-// ================================================
 // UPDATE PROFILE
-// ================================================
-
 async function updateUserProfile(
     userId,
     updates
@@ -366,10 +348,7 @@ async function updateUserProfile(
     }
 }
 
-// ================================================
 // GET USER PROFILE
-// ================================================
-
 async function getUserProfile(userId) {
 
     try {
@@ -397,10 +376,7 @@ async function getUserProfile(userId) {
     }
 }
 
-// ================================================
 // NAVBAR
-// ================================================
-
 function initNavbar() {
 
     const logoutBtn =
@@ -427,10 +403,7 @@ function initNavbar() {
     }
 }
 
-// ================================================
 // UPDATE NAVBAR
-// ================================================
-
 async function updateNavbarWithUser() {
 
     const user =
@@ -477,10 +450,7 @@ async function updateNavbarWithUser() {
     }
 }
 
-// ================================================
 // CHECK AUTHENTICATION
-// ================================================
-
 async function checkAuthentication() {
 
     const user =
@@ -497,10 +467,7 @@ async function checkAuthentication() {
     return user;
 }
 
-// ================================================
 // FORMAT CURRENCY
-// ================================================
-
 function formatCurrency(amount) {
 
     return new Intl.NumberFormat(
@@ -512,10 +479,7 @@ function formatCurrency(amount) {
     ).format(amount);
 }
 
-// ================================================
 // TRUNCATE TEXT
-// ================================================
-
 function truncateText(text, length = 100) {
 
     if (!text) return '';
@@ -527,10 +491,7 @@ function truncateText(text, length = 100) {
     return text.substring(0, length) + '...';
 }
 
-// ================================================
 // CREATE PROFILE CARD
-// ================================================
-
 function createProfileCard(profile) {
 
     return `
@@ -579,10 +540,7 @@ function createProfileCard(profile) {
     `;
 }
 
-// ================================================
 // INIT PAGE
-// ================================================
-
 function initPage() {
 
     initNavbar();
@@ -591,10 +549,7 @@ function initPage() {
 
 }
 
-// ================================================
 // GLOBAL EXPORTS
-// ================================================
-
 window.showAlert = showAlert;
 window.showToast = showToast;
 
@@ -631,10 +586,7 @@ window.createProfileCard =
 window.checkAuthentication =
     checkAuthentication;
 
-// ================================================
 // PAGE LOAD
-// ================================================
-
 document.addEventListener(
     'DOMContentLoaded',
     initPage
