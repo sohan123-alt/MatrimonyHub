@@ -128,55 +128,173 @@
     <script src="../assets/js/config/supabase.js"></script>
     <script src="../assets/js/userpanel/common.js"></script>
     <script>
-        const loginForm = document.getElementById('login-form');
-        const alertsContainer = document.getElementById('alerts-container');
 
-        // Check if user is already logged in
-        document.addEventListener('DOMContentLoaded', async () => {
-            const isAuthenticated = await isUserAuthenticated();
-            if (isAuthenticated) {
-                window.location.href = 'dashboard.html';
-            }
-        });
+    // ============================================
+    // LOGIN PAGE SCRIPT
+    // ============================================
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    const loginForm =
+        document.getElementById('login-form');
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
+    const alertsContainer =
+        document.getElementById('alerts-container');
 
-            if (!email || !password) {
-                showAlert('Please fill in all fields', 'warning', alertsContainer);
-                return;
-            }
+    // ============================================
+    // CHECK USER ALREADY LOGGED IN
+    // ============================================
 
-            if (!validateEmail(email)) {
-                showAlert('Please enter a valid email address', 'warning', alertsContainer);
-                return;
-            }
-
-            showLoading('Logging in...');
+    document.addEventListener(
+        'DOMContentLoaded',
+        async () => {
 
             try {
-                const result = await loginUser(email, password);
 
-                if (result.success) {
-                    hideLoading();
-                    showAlert('Login successful! Redirecting...', 'success', alertsContainer);
+                // Check auth
+                const isAuthenticated =
+                    await isUserAuthenticated();
 
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } else {
-                    hideLoading();
-                    showAlert(result.error || 'Login failed. Please check your credentials.', 'danger', alertsContainer);
+                // Redirect if logged in
+                if (isAuthenticated) {
+
+                    window.location.href =
+                        'dashboard.html';
                 }
+
             } catch (error) {
-                hideLoading();
-                showAlert('An error occurred: ' + error.message, 'danger', alertsContainer);
+
+                console.error(
+                    'Authentication Check Error:',
+                    error
+                );
             }
-        });
-    </script>
+        }
+    );
+
+    // ============================================
+    // LOGIN FORM SUBMIT
+    // ============================================
+
+    if (loginForm) {
+
+        loginForm.addEventListener(
+            'submit',
+            async (e) => {
+
+                e.preventDefault();
+
+                // ====================================
+                // GET INPUT VALUES
+                // ====================================
+
+                const email =
+                    document
+                        .getElementById('email')
+                        .value
+                        .trim();
+
+                const password =
+                    document
+                        .getElementById('password')
+                        .value;
+
+                // ====================================
+                // VALIDATION
+                // ====================================
+
+                if (!email || !password) {
+
+                    showAlert(
+                        'Please fill in all fields',
+                        'warning',
+                        alertsContainer
+                    );
+
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+
+                    showAlert(
+                        'Please enter a valid email address',
+                        'warning',
+                        alertsContainer
+                    );
+
+                    return;
+                }
+
+                // SHOW LOADING
+                showLoading('Logging in...');
+
+                try {
+
+                    // ================================
+                    // LOGIN USER
+                    // ================================
+
+                    const result =
+                        await loginUser(
+                            email,
+                            password
+                        );
+
+                    // ================================
+                    // SUCCESS
+                    // ================================
+
+                    if (result.success) {
+
+                        hideLoading();
+
+                        showAlert(
+                            'Login successful! Redirecting...',
+                            'success',
+                            alertsContainer
+                        );
+
+                        setTimeout(() => {
+
+                            window.location.href =
+                                'dashboard.html';
+
+                        }, 1500);
+
+                    }
+
+                    // ================================
+                    // FAILED
+                    // ================================
+
+                    else {
+
+                        hideLoading();
+
+                        showAlert(
+                            result.error ||
+                            'Login failed. Please check your credentials.',
+                            'danger',
+                            alertsContainer
+                        );
+                    }
+
+                } catch (error) {
+
+                    hideLoading();
+
+                    console.error(error);
+
+                    showAlert(
+                        'An error occurred: ' +
+                        error.message,
+                        'danger',
+                        alertsContainer
+                    );
+                }
+            }
+        );
+    }
+
+</script>
 </body>
 
 </html>
