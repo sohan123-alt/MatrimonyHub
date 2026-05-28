@@ -258,7 +258,7 @@ async function registerUser(
     }
 }
 
-=// LOGIN USER
+// LOGIN USER
 async function loginUser(email, password) {
 
     try {
