@@ -1,5 +1,5 @@
 // ================================================
-// COMMON JAVASCRIPT FUNCTIONS - FIXED VERSION
+// COMMON JAVASCRIPT FUNCTIONS - FULL FIXED VERSION
 // ================================================
 
 // ================================================
@@ -211,7 +211,6 @@ async function getCurrentUser() {
             data: { session }
         } = await window.supabaseClient.auth.getSession();
 
-        // No session
         if (!session) {
             return null;
         }
@@ -246,7 +245,6 @@ async function registerUser(
             };
         }
 
-        // Create Auth User
         const { data, error } =
             await window.supabaseClient.auth.signUp({
 
@@ -269,7 +267,6 @@ async function registerUser(
             };
         }
 
-        // Create Profile Table Entry
         if (data.user) {
 
             const { error: profileError } =
@@ -401,7 +398,9 @@ async function updateUserProfile(
                     ...updates,
                     updated_at: new Date().toISOString()
                 })
-                .eq('id', userId);
+                .eq('id', userId)
+                .select()
+                .single();
 
         if (error) throw error;
 
@@ -467,6 +466,10 @@ async function searchProfiles(filters = {}) {
             query = query.eq('gender', filters.gender);
         }
 
+        if (filters.location) {
+            query = query.ilike('location', `%${filters.location}%`);
+        }
+
         const { data, error } =
             await query.limit(
                 filters.limit || 6
@@ -508,7 +511,8 @@ async function sendInterest(
 
                     sender_id: senderId,
                     receiver_id: receiverId,
-                    message: message
+                    message: message,
+                    created_at: new Date().toISOString()
                 });
 
         if (error) throw error;
@@ -578,6 +582,198 @@ async function removeFromFavorites(
                 .eq('favorite_id', favoriteUserId);
 
         if (error) throw error;
+
+        return {
+            success: true
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// ========================================
+// UPLOAD PROFILE IMAGE
+// ========================================
+
+async function uploadProfileImage(userId, file) {
+
+    try {
+
+        if (!file) {
+            throw new Error('No file selected');
+        }
+
+        const fileExt = file.name.split('.').pop();
+
+        const fileName =
+            `${userId}-${Date.now()}.${fileExt}`;
+
+        const filePath =
+            `profiles/${fileName}`;
+
+        const { error: uploadError } =
+            await window.supabaseClient.storage
+                .from('profile-images')
+                .upload(filePath, file, {
+                    upsert: true
+                });
+
+        if (uploadError) {
+            throw uploadError;
+        }
+
+        const {
+            data: { publicUrl }
+        } = window.supabaseClient.storage
+            .from('profile-images')
+            .getPublicUrl(filePath);
+
+        await window.supabaseClient
+            .from('profiles')
+            .update({
+                profile_image_url: publicUrl
+            })
+            .eq('id', userId);
+
+        return {
+            success: true,
+            url: publicUrl,
+            path: filePath
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// ========================================
+// UPLOAD GALLERY IMAGE
+// ========================================
+
+async function uploadGalleryImage(userId, file) {
+
+    try {
+
+        const fileExt =
+            file.name.split('.').pop();
+
+        const fileName =
+            `${userId}-${Date.now()}.${fileExt}`;
+
+        const filePath =
+            `gallery/${fileName}`;
+
+        const { error: uploadError } =
+            await window.supabaseClient.storage
+                .from('gallery-images')
+                .upload(filePath, file);
+
+        if (uploadError) {
+            throw uploadError;
+        }
+
+        const {
+            data: { publicUrl }
+        } = window.supabaseClient.storage
+            .from('gallery-images')
+            .getPublicUrl(filePath);
+
+        const { data, error } =
+            await window.supabaseClient
+                .from('gallery_images')
+                .insert([
+                    {
+                        user_id: userId,
+                        image_url: publicUrl,
+                        image_public_id: filePath
+                    }
+                ])
+                .select();
+
+        if (error) {
+            throw error;
+        }
+
+        return {
+            success: true,
+            data
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// ========================================
+// GET USER GALLERY
+// ========================================
+
+async function getUserGallery(userId) {
+
+    try {
+
+        const { data, error } =
+            await window.supabaseClient
+                .from('gallery_images')
+                .select('*')
+                .eq('user_id', userId)
+                .order('created_at', {
+                    ascending: false
+                });
+
+        if (error) {
+            throw error;
+        }
+
+        return {
+            success: true,
+            data
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// ========================================
+// DELETE GALLERY IMAGE
+// ========================================
+
+async function deleteGalleryImage(userId, imageId, imagePath) {
+
+    try {
+
+        await window.supabaseClient.storage
+            .from('gallery-images')
+            .remove([imagePath]);
+
+        const { error } =
+            await window.supabaseClient
+                .from('gallery_images')
+                .delete()
+                .eq('id', imageId)
+                .eq('user_id', userId);
+
+        if (error) {
+            throw error;
+        }
 
         return {
             success: true
@@ -832,6 +1028,18 @@ window.addToFavorites =
 window.removeFromFavorites =
     removeFromFavorites;
 
+window.uploadProfileImage =
+    uploadProfileImage;
+
+window.uploadGalleryImage =
+    uploadGalleryImage;
+
+window.getUserGallery =
+    getUserGallery;
+
+window.deleteGalleryImage =
+    deleteGalleryImage;
+
 window.createProfileCard =
     createProfileCard;
 
@@ -846,56 +1054,3 @@ document.addEventListener(
     'DOMContentLoaded',
     initPage
 );
-// ========================================
-// UPLOAD PROFILE IMAGE
-// ========================================
-
-async function uploadProfileImage(file, userId) {
-
-    try {
-
-        if (!file) {
-            throw new Error('No file selected');
-        }
-
-        const fileExt = file.name.split('.').pop();
-
-        const fileName =
-            `${userId}-${Date.now()}.${fileExt}`;
-
-        // Upload
-        const { data, error } =
-            await supabaseClient.storage
-                .from('profile-images')
-                .upload(fileName, file, {
-                    upsert: true
-                });
-
-        if (error) {
-            throw error;
-        }
-
-        // Public URL
-        const {
-            data: { publicUrl }
-        } = supabaseClient.storage
-            .from('profile-images')
-            .getPublicUrl(fileName);
-
-        return {
-            success: true,
-            url: publicUrl,
-            path: fileName
-        };
-
-    } catch (error) {
-
-        return {
-            success: false,
-            error: error.message
-        };
-    }
-}
-
-// Global
-window.uploadProfileImage = uploadProfileImage;
