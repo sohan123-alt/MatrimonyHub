@@ -1,6 +1,11 @@
-// COMMON JAVASCRIPT FUNCTIONS
+// ================================================
+// COMMON JAVASCRIPT FUNCTIONS - FIXED VERSION
+// ================================================
 
+// ================================================
 // ALERT SYSTEM
+// ================================================
+
 function showAlert(message, type = 'info', container = null) {
 
     const alertContainer =
@@ -46,9 +51,7 @@ function showAlert(message, type = 'info', container = null) {
 
     alertContainer.prepend(alert);
 
-    // Close Button
-    const closeBtn =
-        alert.querySelector('.alert-close');
+    const closeBtn = alert.querySelector('.alert-close');
 
     if (closeBtn) {
 
@@ -57,7 +60,6 @@ function showAlert(message, type = 'info', container = null) {
         });
     }
 
-    // Auto Remove
     setTimeout(() => {
 
         if (alert.parentNode) {
@@ -77,7 +79,10 @@ function showToast(message, type = 'success') {
 
 }
 
+// ================================================
 // LOADING SYSTEM
+// ================================================
+
 function showLoading(message = 'Loading...') {
 
     let loader =
@@ -142,7 +147,10 @@ function hideLoading() {
     }
 }
 
+// ================================================
 // EMAIL VALIDATION
+// ================================================
+
 function validateEmail(email) {
 
     const regex =
@@ -151,56 +159,64 @@ function validateEmail(email) {
     return regex.test(email);
 }
 
+// ================================================
 // PASSWORD VALIDATION
+// ================================================
+
 function validatePassword(password) {
 
     return password.length >= 6;
 
 }
 
+// ================================================
 // AUTH CHECK
+// ================================================
+
 async function isUserAuthenticated() {
 
     try {
 
+        if (!window.supabaseClient) {
+            return false;
+        }
+
         const {
             data: { session }
-        } = await supabaseClient.auth.getSession();
+        } = await window.supabaseClient.auth.getSession();
 
         return !!session;
 
     } catch (error) {
 
-        console.error(error);
+        console.error('Auth Check Error:', error);
 
         return false;
     }
 }
 
+// ================================================
 // GET CURRENT USER
+// ================================================
+
 async function getCurrentUser() {
 
     try {
 
+        if (!window.supabaseClient) {
+            return null;
+        }
+
         const {
             data: { session }
-        } = await supabaseClient.auth.getSession();
+        } = await window.supabaseClient.auth.getSession();
 
         // No session
         if (!session) {
             return null;
         }
 
-        const {
-            data: { user },
-            error
-        } = await supabaseClient.auth.getUser();
-
-        if (error) {
-            return null;
-        }
-
-        return user;
+        return session.user;
 
     } catch (error) {
 
@@ -222,8 +238,17 @@ async function registerUser(
 
     try {
 
+        if (!window.supabaseClient) {
+
+            return {
+                success: false,
+                error: 'Supabase not initialized'
+            };
+        }
+
+        // Create Auth User
         const { data, error } =
-            await supabaseClient.auth.signUp({
+            await window.supabaseClient.auth.signUp({
 
                 email: email,
 
@@ -244,6 +269,34 @@ async function registerUser(
             };
         }
 
+        // Create Profile Table Entry
+        if (data.user) {
+
+            const { error: profileError } =
+                await window.supabaseClient
+                    .from('profiles')
+                    .insert({
+
+                        id: data.user.id,
+
+                        full_name: fullName,
+
+                        email: email,
+
+                        created_at: new Date().toISOString()
+                    });
+
+            if (profileError) {
+
+                console.error(profileError);
+
+                return {
+                    success: false,
+                    error: profileError.message
+                };
+            }
+        }
+
         return {
             success: true,
             data: data
@@ -258,13 +311,24 @@ async function registerUser(
     }
 }
 
+// ================================================
 // LOGIN USER
+// ================================================
+
 async function loginUser(email, password) {
 
     try {
 
+        if (!window.supabaseClient) {
+
+            return {
+                success: false,
+                error: 'Supabase not initialized'
+            };
+        }
+
         const { data, error } =
-            await supabaseClient.auth
+            await window.supabaseClient.auth
                 .signInWithPassword({
 
                     email: email,
@@ -293,13 +357,16 @@ async function loginUser(email, password) {
     }
 }
 
+// ================================================
 // LOGOUT USER
+// ================================================
+
 async function logoutUser() {
 
     try {
 
         const { error } =
-            await supabaseClient.auth.signOut();
+            await window.supabaseClient.auth.signOut();
 
         if (error) throw error;
 
@@ -316,7 +383,10 @@ async function logoutUser() {
     }
 }
 
+// ================================================
 // UPDATE PROFILE
+// ================================================
+
 async function updateUserProfile(
     userId,
     updates
@@ -325,12 +395,13 @@ async function updateUserProfile(
     try {
 
         const { data, error } =
-            await supabaseClient
+            await window.supabaseClient
                 .from('profiles')
-                .upsert({
-                    id: userId,
-                    ...updates
-                });
+                .update({
+                    ...updates,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', userId);
 
         if (error) throw error;
 
@@ -348,13 +419,16 @@ async function updateUserProfile(
     }
 }
 
+// ================================================
 // GET USER PROFILE
+// ================================================
+
 async function getUserProfile(userId) {
 
     try {
 
         const { data, error } =
-            await supabaseClient
+            await window.supabaseClient
                 .from('profiles')
                 .select('*')
                 .eq('id', userId)
@@ -376,7 +450,152 @@ async function getUserProfile(userId) {
     }
 }
 
+// ================================================
+// SEARCH PROFILES
+// ================================================
+
+async function searchProfiles(filters = {}) {
+
+    try {
+
+        let query =
+            window.supabaseClient
+                .from('profiles')
+                .select('*');
+
+        if (filters.gender) {
+            query = query.eq('gender', filters.gender);
+        }
+
+        const { data, error } =
+            await query.limit(
+                filters.limit || 6
+            );
+
+        if (error) throw error;
+
+        return {
+            success: true,
+            data: data || []
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message,
+            data: []
+        };
+    }
+}
+
+// ================================================
+// SEND INTEREST
+// ================================================
+
+async function sendInterest(
+    senderId,
+    receiverId,
+    message = ''
+) {
+
+    try {
+
+        const { data, error } =
+            await window.supabaseClient
+                .from('interests')
+                .insert({
+
+                    sender_id: senderId,
+                    receiver_id: receiverId,
+                    message: message
+                });
+
+        if (error) throw error;
+
+        return {
+            success: true,
+            data
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// ================================================
+// FAVORITES
+// ================================================
+
+async function addToFavorites(
+    userId,
+    favoriteUserId
+) {
+
+    try {
+
+        const { data, error } =
+            await window.supabaseClient
+                .from('favorites')
+                .insert({
+
+                    user_id: userId,
+                    favorite_id: favoriteUserId
+                });
+
+        if (error) throw error;
+
+        return {
+            success: true,
+            data
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+async function removeFromFavorites(
+    userId,
+    favoriteUserId
+) {
+
+    try {
+
+        const { error } =
+            await window.supabaseClient
+                .from('favorites')
+                .delete()
+                .eq('user_id', userId)
+                .eq('favorite_id', favoriteUserId);
+
+        if (error) throw error;
+
+        return {
+            success: true
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// ================================================
 // NAVBAR
+// ================================================
+
 function initNavbar() {
 
     const logoutBtn =
@@ -403,7 +622,10 @@ function initNavbar() {
     }
 }
 
+// ================================================
 // UPDATE NAVBAR
+// ================================================
+
 async function updateNavbarWithUser() {
 
     const user =
@@ -450,7 +672,10 @@ async function updateNavbarWithUser() {
     }
 }
 
+// ================================================
 // CHECK AUTHENTICATION
+// ================================================
+
 async function checkAuthentication() {
 
     const user =
@@ -467,7 +692,10 @@ async function checkAuthentication() {
     return user;
 }
 
+// ================================================
 // FORMAT CURRENCY
+// ================================================
+
 function formatCurrency(amount) {
 
     return new Intl.NumberFormat(
@@ -479,7 +707,10 @@ function formatCurrency(amount) {
     ).format(amount);
 }
 
+// ================================================
 // TRUNCATE TEXT
+// ================================================
+
 function truncateText(text, length = 100) {
 
     if (!text) return '';
@@ -491,7 +722,10 @@ function truncateText(text, length = 100) {
     return text.substring(0, length) + '...';
 }
 
+// ================================================
 // CREATE PROFILE CARD
+// ================================================
+
 function createProfileCard(profile) {
 
     return `
@@ -540,7 +774,10 @@ function createProfileCard(profile) {
     `;
 }
 
+// ================================================
 // INIT PAGE
+// ================================================
+
 function initPage() {
 
     initNavbar();
@@ -549,7 +786,10 @@ function initPage() {
 
 }
 
+// ================================================
 // GLOBAL EXPORTS
+// ================================================
+
 window.showAlert = showAlert;
 window.showToast = showToast;
 
@@ -580,13 +820,28 @@ window.updateUserProfile =
 window.getUserProfile =
     getUserProfile;
 
+window.searchProfiles =
+    searchProfiles;
+
+window.sendInterest =
+    sendInterest;
+
+window.addToFavorites =
+    addToFavorites;
+
+window.removeFromFavorites =
+    removeFromFavorites;
+
 window.createProfileCard =
     createProfileCard;
 
 window.checkAuthentication =
     checkAuthentication;
 
+// ================================================
 // PAGE LOAD
+// ================================================
+
 document.addEventListener(
     'DOMContentLoaded',
     initPage
