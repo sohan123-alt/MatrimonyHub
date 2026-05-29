@@ -846,3 +846,56 @@ document.addEventListener(
     'DOMContentLoaded',
     initPage
 );
+// ========================================
+// UPLOAD PROFILE IMAGE
+// ========================================
+
+async function uploadProfileImage(file, userId) {
+
+    try {
+
+        if (!file) {
+            throw new Error('No file selected');
+        }
+
+        const fileExt = file.name.split('.').pop();
+
+        const fileName =
+            `${userId}-${Date.now()}.${fileExt}`;
+
+        // Upload
+        const { data, error } =
+            await supabaseClient.storage
+                .from('profile-images')
+                .upload(fileName, file, {
+                    upsert: true
+                });
+
+        if (error) {
+            throw error;
+        }
+
+        // Public URL
+        const {
+            data: { publicUrl }
+        } = supabaseClient.storage
+            .from('profile-images')
+            .getPublicUrl(fileName);
+
+        return {
+            success: true,
+            url: publicUrl,
+            path: fileName
+        };
+
+    } catch (error) {
+
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+// Global
+window.uploadProfileImage = uploadProfileImage;
