@@ -142,94 +142,174 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../assets/js/config/supabase.js"></script>
     <script src="../assets/js/userpanel/common.js"></script>
-    <script>
-    const registerForm = document.getElementById('register-form');
-    const alertsContainer = document.getElementById('alerts-container');
+   <script>
 
-    // Alert Function
-    function showAlert(message, type = 'danger') {
-        alertsContainer.innerHTML = `
-            <div style="
-                padding: 12px;
-                margin-bottom: 15px;
-                border-radius: 8px;
-                color: white;
-                background: ${type === 'success' ? '#4caf50' : '#f44336'};
-            ">
-                ${message}
-            </div>
-        `;
-    }
+const registerForm =
+    document.getElementById('register-form');
 
-    registerForm.addEventListener('submit', async (e) => {
+const alertsContainer =
+    document.getElementById('alerts-container');
+
+function showAlert(message, type = 'danger') {
+
+    alertsContainer.innerHTML = `
+        <div style="
+            padding:12px;
+            margin-bottom:15px;
+            border-radius:8px;
+            color:white;
+            background:${type === 'success'
+                ? '#4caf50'
+                : '#f44336'};
+        ">
+            ${message}
+        </div>
+    `;
+}
+
+registerForm.addEventListener(
+    'submit',
+    async (e) => {
+
         e.preventDefault();
 
-        const fullName = document.getElementById('fullName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const gender = document.getElementById('gender').value;
-        const dob = document.getElementById('dob').value;
+        const fullName =
+            document.getElementById('fullName')
+            .value.trim();
 
-        // Validation
-        if (!fullName || !email || !password || !confirmPassword || !gender || !dob) {
-            showAlert('Please fill in all fields');
+        const email =
+            document.getElementById('email')
+            .value.trim();
+
+        const password =
+            document.getElementById('password')
+            .value;
+
+        const confirmPassword =
+            document.getElementById('confirmPassword')
+            .value;
+
+        const gender =
+            document.getElementById('gender')
+            .value;
+
+        const dob =
+            document.getElementById('dob')
+            .value;
+
+        // VALIDATION
+
+        if (
+            !fullName ||
+            !email ||
+            !password ||
+            !confirmPassword ||
+            !gender ||
+            !dob
+        ) {
+
+            showAlert(
+                'Please fill in all fields'
+            );
+
             return;
         }
 
         if (password !== confirmPassword) {
-            showAlert('Passwords do not match');
+
+            showAlert(
+                'Passwords do not match'
+            );
+
             return;
         }
 
         if (password.length < 6) {
-            showAlert('Password must be at least 6 characters');
+
+            showAlert(
+                'Password must be at least 6 characters'
+            );
+
             return;
         }
 
         try {
 
-            // REGISTER USER
-            const { data, error } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password
+            // REGISTER AUTH USER
+
+            const {
+                data,
+                error
+            } = await supabaseClient.auth.signUp({
+
+                email,
+                password
+
             });
 
             if (error) {
+
                 showAlert(error.message);
+
                 return;
             }
 
-            const user = data.user;
+            const user = data?.user;
 
-            // INSERT PROFILE DATA
-            const { error: profileError } = await supabaseClient
+            if (!user) {
+
+                showAlert(
+                    'User registration failed'
+                );
+
+                return;
+            }
+
+            // INSERT PROFILE
+
+            const {
+                error: profileError
+            } = await supabaseClient
                 .from('profiles')
-                .insert([
-                    {
-                        id: user.id,
-                        full_name: fullName,
-                        gender: gender,
-                        dob: dob,
-                        email: email
-                    }
-                ]);
+                .insert([{
+
+                    id: user.id,
+
+                    full_name: fullName,
+
+                    email: email,
+
+                    gender: gender,
+
+                    dob: dob
+
+                }]);
 
             if (profileError) {
+
                 showAlert(profileError.message);
+
                 return;
             }
 
-            showAlert('Registration Successful!', 'success');
+            showAlert(
+                'Registration Successful!',
+                'success'
+            );
 
             setTimeout(() => {
-                window.location.href = 'login.html';
+
+                window.location.href =
+                    'login.html';
+
             }, 2000);
 
         } catch (err) {
+
             showAlert(err.message);
         }
     });
+
 </script>
 </body>
 
